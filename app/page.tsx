@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Pokemon, PokemonTypeList } from '@/types/pokemon';
-import PokemonCard from '@/components/PokemonCard';
-import TypeBadge from '@/components/TypeBadge';
-import SearchForm from '@/components/SearchForm';
+import { useState, useEffect } from "react";
+import { Pokemon, PokemonTypeList } from "@/types/pokemon";
+import PokemonCard from "@/components/PokemonCard";
+import TypeBadge from "@/components/TypeBadge";
+import SearchForm from "@/components/SearchForm";
 
 export default function Home() {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [pokemonList, setPokemonList] = useState<Pokemon[]>([]);
   const [types, setTypes] = useState<PokemonTypeList[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -15,14 +15,14 @@ export default function Home() {
   useEffect(() => {
     const fetchTypes = async () => {
       try {
-        const response = await fetch('https://pokeapi.co/api/v2/type');
+        const response = await fetch("https://pokeapi.co/api/v2/type");
         const data = await response.json();
         const filteredTypes = data.results.filter(
-          (type: PokemonTypeList) => !['shadow', 'unknown'].includes(type.name)
+          (type: PokemonTypeList) => !["shadow", "unknown"].includes(type.name)
         );
         setTypes(filteredTypes);
       } catch (error) {
-        console.error('Error fetching types:', error);
+        console.error("Error fetching types:", error);
       }
     };
 
@@ -41,7 +41,8 @@ export default function Home() {
       const data = await response.json();
       setPokemonList([data]);
     } catch (error) {
-      alert('Pokémon not found!');
+      alert("Pokémon not found!");
+      console.error(error); // Adicionado o console.error
     } finally {
       setIsLoading(false);
     }
@@ -52,17 +53,17 @@ export default function Home() {
     try {
       const response = await fetch(`https://pokeapi.co/api/v2/type/${type}`);
       const data = await response.json();
-      
+
       const pokemonData = await Promise.all(
         data.pokemon.map(async (p: { pokemon: { url: string } }) => {
           const res = await fetch(p.pokemon.url);
           return res.json();
         })
       );
-      
+
       setPokemonList(pokemonData);
     } catch (error) {
-      console.error('Error fetching Pokémon by type:', error);
+      console.error("Error fetching Pokémon by type:", error);
     } finally {
       setIsLoading(false);
     }
@@ -83,11 +84,7 @@ export default function Home() {
 
         <div className="flex flex-wrap gap-2 justify-center mb-8">
           {types.map((type) => (
-            <TypeBadge
-              key={type.name}
-              type={type}
-              onClick={handleTypeClick}
-            />
+            <TypeBadge key={type.name} type={type} onClick={handleTypeClick} />
           ))}
         </div>
 
